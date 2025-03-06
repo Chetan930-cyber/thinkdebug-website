@@ -12,27 +12,51 @@ const Package = () => {
         const response = await axios.post(
           "http://139.59.46.251:3300/product/product-list-admin"
         );
-        console.log("API Response:", response.data); // Debug API response
+        console.log("API Response:", response.data);
 
         let fetchedPackages = response.data?.data;
-        
-        // Ensure fetchedPackages is an array
-        if (!Array.isArray(fetchedPackages) || fetchedPackages.length === 0) {
-          console.warn("API returned no data. Using fallback packages.");
-          fetchedPackages = [
-            { _id: "1", name: "Running Shoes", price: 250, oldPrice: 400, description: "High-performance shoes." },
-            { _id: "2", name: "Laptop", price: 1200, oldPrice: 1600, description: "Sleek and powerful." },
-            { _id: "3", name: "Wireless Earbuds", price: 100, oldPrice: 180, description: "Premium sound quality." },
-            { _id: "4", name: "Bluetooth Speaker", price: 150, oldPrice: 300, description: "Superior sound quality." },
-          ];
-        }
 
-        setPackages(fetchedPackages);
-        if (fetchedPackages.length > 0) {
-          setSelected(fetchedPackages[0].name);
+        // Ensure valid data, else trigger fallback
+        if (!Array.isArray(fetchedPackages) || fetchedPackages.length === 0) {
+          throw new Error("Empty API Response");
         }
+        setPackages(fetchedPackages);
       } catch (error) {
         console.error("Error fetching packages:", error);
+
+        // Fallback manual data
+        const fallbackPackages = [
+          {
+            _id: "1",
+            name: "Running Shoes",
+            price: 250,
+            oldPrice: 400,
+            description: "High-performance shoes.",
+          },
+          {
+            _id: "2",
+            name: "Laptop",
+            price: 1200,
+            oldPrice: 1600,
+            description: "Sleek and powerful.",
+          },
+          {
+            _id: "3",
+            name: "Wireless Earbuds",
+            price: 100,
+            oldPrice: 180,
+            description: "Premium sound quality.",
+          },
+          {
+            _id: "4",
+            name: "Bluetooth Speaker",
+            price: 150,
+            oldPrice: 300,
+            description: "Superior sound quality.",
+          },
+        ];
+
+        setPackages(fallbackPackages);
       } finally {
         setLoading(false);
       }
@@ -57,7 +81,9 @@ const Package = () => {
                 <div
                   key={item._id}
                   className={`p-4 rounded-md cursor-pointer text-sm text-center transition-all duration-300 ${
-                    selected === item.name ? "bg-black text-white" : "bg-gray-100 text-black"
+                    selected === item.name
+                      ? "bg-black text-white"
+                      : "bg-gray-100 text-black"
                   }`}
                   onClick={() => setSelected(item.name)}
                 >
@@ -65,10 +91,18 @@ const Package = () => {
                   <p className="font-semibold">
                     AED {item.price}{" "}
                     {item.oldPrice && (
-                      <span className="text-gray-400 line-through text-xs">AED {item.oldPrice}</span>
+                      <span className="text-gray-400 line-through text-xs">
+                        AED {item.oldPrice}
+                      </span>
                     )}
                   </p>
-                  <p className={`text-xs mt-1 ${selected === item.name ? "text-white" : "text-gray-600"}`}>{item.description}</p>
+                  <p
+                    className={`text-xs mt-1 ${
+                      selected === item.name ? "text-white" : "text-gray-600"
+                    }`}
+                  >
+                    {item.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -79,27 +113,59 @@ const Package = () => {
             {selected ? (
               <>
                 <p className="text-center text-sm font-bold">
-                  Total: <span className="text-green-500 font-bold text-lg">AED {packages.find((p) => p.name === selected)?.price || "0"}</span>
+                  Total:{" "}
+                  <span className="text-green-500 font-bold text-lg">
+                    AED {packages.find((p) => p.name === selected)?.price || "0"}
+                  </span>
                   {packages.find((p) => p.name === selected)?.oldPrice && (
-                    <span className="text-gray-400 line-through ml-2">AED {packages.find((p) => p.name === selected)?.oldPrice}</span>
+                    <span className="text-gray-400 line-through ml-2">
+                      AED {packages.find((p) => p.name === selected)?.oldPrice}
+                    </span>
                   )}
                 </p>
 
                 <div className="bg-gray-800 text-white text-sm py-2 px-3 mt-2 rounded-md text-center">
-                  <span>✔️ OFFER CLAIMED! You save AED {packages.find((p) => p.name === selected)?.oldPrice - packages.find((p) => p.name === selected)?.price || 0}</span>
+                  <span>
+                    ✔️ OFFER CLAIMED! You save AED{" "}
+                    {packages.find((p) => p.name === selected)?.oldPrice -
+                      packages.find((p) => p.name === selected)?.price || 0}
+                  </span>
                 </div>
 
                 <div className="mt-4 text-sm space-y-2 flex-grow">
-                  <p className="flex justify-between"><span className="text-gray-600">Product</span> <span>{selected || "N/A"}</span></p>
-                  <p className="flex justify-between"><span className="text-gray-600">Date</span> <span className="text-gray-400">Undefined</span></p>
-                  <p className="flex justify-between"><span className="text-gray-600">Time</span> <span className="text-gray-400">Undefined</span></p>
-                  <p className="flex justify-between"><span className="text-gray-600">Subtotal</span> <span>AED {packages.find((p) => p.name === selected)?.oldPrice || "0"}</span></p>
-                  <p className="flex justify-between"><span className="text-gray-600">Discount</span> <span>AED {packages.find((p) => p.name === selected)?.oldPrice - packages.find((p) => p.name === selected)?.price || 0}</span></p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-600">Product</span>{" "}
+                    <span>{selected || "N/A"}</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-600">Date</span>{" "}
+                    <span className="text-gray-400">Undefined</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-600">Time</span>{" "}
+                    <span className="text-gray-400">Undefined</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-600">Subtotal</span>{" "}
+                    <span>
+                      AED {packages.find((p) => p.name === selected)?.oldPrice || "0"}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-600">Discount</span>{" "}
+                    <span>
+                      AED{" "}
+                      {packages.find((p) => p.name === selected)?.oldPrice -
+                        packages.find((p) => p.name === selected)?.price || 0}
+                    </span>
+                  </p>
                 </div>
 
                 <div className="bg-white p-4 rounded-lg mt-4 flex justify-between">
                   <p className="text-lg font-bold">Amount to pay:</p>
-                  <p className="text-lg font-bold text-black">AED {packages.find((p) => p.name === selected)?.price || "0"}</p>
+                  <p className="text-lg font-bold text-black">
+                    AED {packages.find((p) => p.name === selected)?.price || "0"}
+                  </p>
                 </div>
 
                 <button className="w-full bg-black text-white py-2 mt-3 rounded-md flex justify-center items-center">
