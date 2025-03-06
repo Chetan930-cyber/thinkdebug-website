@@ -12,9 +12,13 @@ const Package = () => {
         const response = await axios.post(
           "http://139.59.46.251:3300/product/product-list-admin"
         );
-        let fetchedPackages = response.data?.data;
+        console.log("API Response:", response.data); // Debug API response
 
+        let fetchedPackages = response.data?.data;
+        
+        // Ensure fetchedPackages is an array
         if (!Array.isArray(fetchedPackages) || fetchedPackages.length === 0) {
+          console.warn("API returned no data. Using fallback packages.");
           fetchedPackages = [
             { _id: "1", name: "Running Shoes", price: 250, oldPrice: 400, description: "High-performance shoes." },
             { _id: "2", name: "Laptop", price: 1200, oldPrice: 1600, description: "Sleek and powerful." },
@@ -33,6 +37,7 @@ const Package = () => {
         setLoading(false);
       }
     };
+
     fetchPackages();
   }, []);
 
@@ -40,6 +45,8 @@ const Package = () => {
     <div className="max-w-[900px] mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-md">
       {loading ? (
         <p className="text-center text-gray-500">Loading packages...</p>
+      ) : packages.length === 0 ? (
+        <p className="text-center text-gray-500">No packages available.</p>
       ) : (
         <div className="flex flex-col lg:flex-row gap-4 min-h-[450px]">
           {/* Package Selection */}
