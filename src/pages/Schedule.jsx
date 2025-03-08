@@ -17,26 +17,21 @@ const Schedule = () => {
           key={index}
           className="flex flex-col sm:flex-row items-center justify-between border-b py-4 text-center sm:text-left"
         >
-       
           <div className="flex flex-col sm:flex-row items-center w-full sm:w-auto">
             <div className="mb-2 sm:mb-0 sm:mr-12">
               <p className="font-bold text-lg">{session.time}</p>
               <p className="text-gray-500">{session.duration}</p>
             </div>
-
             <img
               src="india.png"
               alt="Instructor"
               className="w-12 h-12 rounded-full sm:ml-40 mx-auto sm:mx-0"
             />
           </div>
-
-        
           <div className="flex flex-col text-center sm:text-left mt-2 sm:mt-0">
             <p className="font-bold text-lg">.BARRE.</p>
             <p className="text-gray-500">Pilates & Yoga Studio</p>
           </div>
-          
           <div className="flex flex-col text-center sm:text-left mt-2 sm:mt-0">
             <p className="text-gray-900">Jumeirah Village Circle</p>
           </div>
